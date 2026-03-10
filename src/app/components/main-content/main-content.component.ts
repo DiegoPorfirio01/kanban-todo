@@ -4,6 +4,7 @@ import { WelcomeSectionComponent } from '../welcome-section/welcome-section.comp
 
 @Component({
   selector: 'app-main-content',
+  standalone: true,
   imports: [WelcomeSectionComponent, TaskListSectionComponent],
   templateUrl: './main-content.component.html',
   styleUrl: './main-content.component.css',

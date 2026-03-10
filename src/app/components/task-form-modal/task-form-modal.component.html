@@ -1,7 +1,7 @@
 <form class="rounded-xl overflow-hidden bg-white">
   <div class="flex gap-1 items center p-4">
     <img src="images/icon-new-task.svg" />
-    <h1 class="font-semibold text-lg">Criar/Editar tarefa</h1>
+    <h1 class="font-semibold text-lg"> {{ _data.mode === "create" ? "Criar" : "Editar" }} tarefa</h1>
     <img class="ml-auto cursor-pointer" src="images/icon-close.svg" />
   </div>
   <div class="p-4 border-y border-[#D1D5D8] flex flex-col gap-4">

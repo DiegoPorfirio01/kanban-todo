@@ -7,6 +7,7 @@ import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-task-list-section',
+  standalone: true,
   imports: [TaskCardComponent, AsyncPipe],
   templateUrl: './task-list-section.component.html',
   styleUrl: './task-list-section.component.css',

@@ -39,7 +39,7 @@
       class="py-3 px-4 bg-[#2A89EF] text-white rounded-xl text-sm font-semibold cursor-pointer active:translate-y-1 transition-transform duration-75 shadow-md shadow-blue-500/50"
       type="submit"
     >
-      Criar uma tarefa
+      {{ _data.mode === "create" ? "Criar uma " : "Editar " + "tarefa" }}
     </button>
   </div>
 </form>

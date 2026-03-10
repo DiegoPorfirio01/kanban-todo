@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TaskFormModalComponent } from './task-form-modal.component';
+import { DIALOG_DATA } from '@angular/cdk/dialog';
 
 describe('TaskFormModalComponent', () => {
   let component: TaskFormModalComponent;
@@ -8,9 +9,9 @@ describe('TaskFormModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TaskFormModalComponent]
-    })
-    .compileComponents();
+      imports: [TaskFormModalComponent],
+      providers: [{ provide: DIALOG_DATA, useValue: { mode: 'create' } }],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(TaskFormModalComponent);
     component = fixture.componentInstance;

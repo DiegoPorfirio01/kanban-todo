@@ -3,6 +3,7 @@ import { Dialog } from '@angular/cdk/dialog';
 import { ComponentType } from '@angular/cdk/portal';
 import { TaskFormModalComponent } from '../components/task-form-modal/task-form-modal.component';
 import { TaskCommentsModalComponent } from '../components/task-comments-modal/task-comments-modal.component';
+import { ETaskModalMode, ITaskFormControls } from '../interfaces/task-interface';
 
 @Injectable({
   providedIn: 'root',
@@ -18,16 +19,21 @@ export class ModalControllerService {
     return this._dialog.open(TaskFormModalComponent, {
       ...this._modalSizeOptions,
       data: {
-        mode: 'create',
+        mode: ETaskModalMode.CREATE,
+        formValues: {
+          name: '',
+          description: '',
+        },
       },
     });
   }
 
-  openEditTaskModal() {
+  openEditTaskModal(formValues: ITaskFormControls) {
     return this._dialog.open(TaskFormModalComponent, {
       ...this._modalSizeOptions,
       data: {
-        mode: 'edit',
+        mode: ETaskModalMode.EDIT,
+        formValues,
       },
     });
   }
@@ -38,5 +44,7 @@ export class ModalControllerService {
     });
   }
 
-  constructor() {}
+  closeTaskFormModal() {
+    this._dialog.closeAll();
+  }
 }

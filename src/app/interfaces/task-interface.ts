@@ -11,3 +11,20 @@ export enum EStatus {
   DOING = 'doing',
   DONE = 'done',
 }
+
+
+export enum ETaskModalMode {
+  CREATE = 'create',
+  EDIT = 'edit',
+  COMMENT = 'comment',
+}
+
+export interface ITaskFormControls {
+  name: string;
+  description: string;
+}
+
+export interface ITaskFormModalData { 
+  mode: ETaskModalMode;
+  formValues: ITaskFormControls;
+}

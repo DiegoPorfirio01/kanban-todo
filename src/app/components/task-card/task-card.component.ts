@@ -1,5 +1,5 @@
 import { Component, inject, input } from '@angular/core';
-import { ITask } from '../../interfaces/task-interface';
+import { ETaskModalMode, ITask, ITaskFormControls } from '../../interfaces/task-interface';
 import { ModalControllerService } from '../../services/modal-controller.service';
 
 @Component({
@@ -15,7 +15,10 @@ export class TaskCardComponent {
   private readonly _taskModalController = inject(ModalControllerService);
 
   openEditTaskModal() {
-    this._taskModalController.openEditTaskModal();
+    this._taskModalController.openEditTaskModal({
+      name: this.task().name,
+      description: this.task().description || '',
+    });
   }
 
   openTaskCommentsModal() {

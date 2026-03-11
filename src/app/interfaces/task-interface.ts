@@ -1,17 +1,19 @@
+import { EStatus } from '../enum';
+
+export interface IComment {
+  id: string;
+  description: string;
+}
+
+type TaskStatus = (typeof EStatus)[keyof typeof EStatus];
+
 export interface ITask {
   id: string;
   name: string;
   description?: string;
-  status: EStatus;
-  comments?: { id: string; description: string }[];
+  status: TaskStatus;
+  comments?: IComment[];
 }
-
-export enum EStatus {
-  DO_TO = 'do-to',
-  DOING = 'doing',
-  DONE = 'done',
-}
-
 
 export enum ETaskModalMode {
   CREATE = 'create',
@@ -24,7 +26,7 @@ export interface ITaskFormControls {
   description: string;
 }
 
-export interface ITaskFormModalData { 
+export interface ITaskFormModalData {
   mode: ETaskModalMode;
   formValues: ITaskFormControls;
 }

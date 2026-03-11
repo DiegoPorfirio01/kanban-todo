@@ -3,7 +3,10 @@ import { Dialog } from '@angular/cdk/dialog';
 import { ComponentType } from '@angular/cdk/portal';
 import { TaskFormModalComponent } from '../components/task-form-modal/task-form-modal.component';
 import { TaskCommentsModalComponent } from '../components/task-comments-modal/task-comments-modal.component';
-import { ETaskModalMode, ITaskFormControls } from '../interfaces/task-interface';
+import {
+  ETaskModalMode,
+  ITaskFormControls,
+} from '../interfaces/task-interface';
 
 @Injectable({
   providedIn: 'root',
@@ -16,8 +19,9 @@ export class ModalControllerService {
   };
 
   openNewTaskModal() {
-    return this._dialog.open(TaskFormModalComponent, {
+    return this._dialog.open<ITaskFormControls>(TaskFormModalComponent, {
       ...this._modalSizeOptions,
+      disableClose: true,
       data: {
         mode: ETaskModalMode.CREATE,
         formValues: {
@@ -29,8 +33,9 @@ export class ModalControllerService {
   }
 
   openEditTaskModal(formValues: ITaskFormControls) {
-    return this._dialog.open(TaskFormModalComponent, {
+    return this._dialog.open<ITaskFormControls>(TaskFormModalComponent, {
       ...this._modalSizeOptions,
+      disableClose: true,
       data: {
         mode: ETaskModalMode.EDIT,
         formValues,
@@ -41,10 +46,7 @@ export class ModalControllerService {
   openTaskCommentModal() {
     return this._dialog.open(TaskCommentsModalComponent, {
       ...this._modalSizeOptions,
+      disableClose: true,
     });
-  }
-
-  closeTaskFormModal() {
-    this._dialog.closeAll();
   }
 }

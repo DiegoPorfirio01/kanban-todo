@@ -1,5 +1,5 @@
 import { Component, inject, input } from '@angular/core';
-import { ETaskModalMode, ITask, ITaskFormControls } from '../../interfaces/task-interface';
+import { ITask, ITaskFormControls } from '../../interfaces/task-interface';
 import { ModalControllerService } from '../../services/modal-controller.service';
 
 @Component({
@@ -10,14 +10,18 @@ import { ModalControllerService } from '../../services/modal-controller.service'
   styleUrl: './task-card.component.css',
 })
 export class TaskCardComponent {
-  task = input.required<ITask>();
+  task = input<ITask>();
 
   private readonly _taskModalController = inject(ModalControllerService);
 
   openEditTaskModal() {
-    this._taskModalController.openEditTaskModal({
-      name: this.task().name,
-      description: this.task().description || '',
+    const dialogRef = this._taskModalController.openEditTaskModal({
+      name: this.task()?.name!,
+      description: this.task()?.description!,
+    });
+
+    dialogRef.closed.subscribe((taskForm) => {
+      console.log('Tarefa alterada: ', taskForm);
     });
   }
 

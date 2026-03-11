@@ -13,7 +13,14 @@ import { AsyncPipe } from '@angular/common';
   styleUrl: './task-list-section.component.css',
 })
 export class TaskListSectionComponent implements OnInit {
-  public tasks$ = inject(TaskService).tasks$;
+  private readonly _tasksService = inject(TaskService);
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._tasksService.tasksTodo.subscribe((tasks) => {
+      console.log('task atuais', tasks);
+      tasks[0].name = 'oi';
+
+      this._tasksService.verificaTasks();
+    });
+  }
 }

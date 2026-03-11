@@ -1,8 +1,18 @@
-<form class="rounded-xl overflow-hidden bg-white" [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+<form
+  class="rounded-xl overflow-hidden bg-white"
+  [formGroup]="taskForm"
+  (ngSubmit)="onFormSubmit()"
+>
   <div class="flex gap-1 items center p-4">
     <img src="images/icon-new-task.svg" />
-    <h1 class="font-semibold text-lg"> {{ _data.mode === ETaskModalMode.CREATE ? "Criar" : "Editar" }} tarefa</h1>
-    <img class="ml-auto cursor-pointer" src="images/icon-close.svg" />
+    <h1 class="font-semibold text-lg">
+      {{ _data.mode === ETaskModalMode.CREATE ? "Criar" : "Editar" }} tarefa
+    </h1>
+    <img
+      (click)="closeModal()"
+      class="ml-auto cursor-pointer"
+      src="images/icon-close.svg"
+    />
   </div>
   <div class="p-4 border-y border-[#D1D5D8] flex flex-col gap-4">
     <div>
@@ -13,9 +23,11 @@
         placeholder="Descreva o que deverá ser feito"
         formControlName="name"
       />
-      <p class="font-semibold text-sm text-red-500">
-        O campo é obrigatório e precisa ter no minímo 10 caracteres.
-      </p>
+      @if (taskForm.get("name")?.invalid && taskForm.get("name")?.touched) {
+        <p class="font-semibold text-sm text-red-500">
+          O campo é obrigatório e precisa ter no minímo 10 caracteres.
+        </p>
+      }
     </div>
     <div>
       <p class="font-semibold text-sm mb-2">Descrição</p>
@@ -25,30 +37,41 @@
         placeholder="Adicione uma descrição"
         formControlName="description"
       />
-      <p class="font-semibold text-sm text-red-500">
-        O campo é obrigatório e precisa ter no minímo 10 caracteres.
-      </p>
+      @if (
+        taskForm.get("description")?.invalid &&
+        taskForm.get("description")?.touched
+      ) {
+        <p class="font-semibold text-sm text-red-500">
+          O campo é obrigatório e precisa ter no minímo 10 caracteres.
+        </p>
+      }
     </div>
   </div>
   <div class="p-4 flex justify-end gap-2">
     <button
       class="py-3 px-4 bg-[#FAFAFA] rounded-xl text-sm font-semibold cursor-pointer active:translate-y-1 transition-transform duration-75"
       type="button"
-      (click)="closeTaskFormModal()"
+      (click)="closeModal()"
     >
       Cancelar
     </button>
 
     <button
-    class="{{ `py-3 px-4 rounded-xl text-white text-sm font-semibold  ${
-       taskForm.invalid
-       ? 'bg-[#D7D8D8] cursor-not-allowed'
-       : 'bg-[#2A89EF] cursor-pointer active:translate-y-1 transition-transform duration-75 shadow-md shadow-blue-500/50'
-    }` }}"
-    type="submit"
-    [disabled]="taskForm.invalid"
-  >
-    {{ _data.mode === ETaskModalMode.CREATE ? "Criar uma " : "Editar " + "tarefa" }}
-  </button>
+      class="{{
+        `py-3 px-4 rounded-xl text-white text-sm font-semibold  ${
+          taskForm.invalid
+            ? 'bg-[#D7D8D8] cursor-not-allowed'
+            : 'bg-[#2A89EF] cursor-pointer active:translate-y-1 transition-transform duration-75 shadow-md shadow-blue-500/50'
+        }`
+      }}"
+      type="submit"
+      [disabled]="taskForm.invalid"
+    >
+      {{
+        _data.mode === ETaskModalMode.CREATE
+          ? "Criar uma "
+          : "Editar " + "tarefa"
+      }}
+    </button>
   </div>
 </form>

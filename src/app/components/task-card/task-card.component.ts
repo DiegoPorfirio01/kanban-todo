@@ -10,14 +10,14 @@ import { ModalControllerService } from '../../services/modal-controller.service'
   styleUrl: './task-card.component.css',
 })
 export class TaskCardComponent {
-  task = input<ITask>();
+  // task = input<ITask>();
 
   private readonly _taskModalController = inject(ModalControllerService);
 
   openEditTaskModal() {
     const dialogRef = this._taskModalController.openEditTaskModal({
-      name: this.task()?.name!,
-      description: this.task()?.description!,
+      name: 'oi',
+      description: 'teste',
     });
 
     dialogRef.closed.subscribe((taskForm) => {

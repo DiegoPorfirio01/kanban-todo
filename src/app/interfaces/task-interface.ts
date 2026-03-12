@@ -5,7 +5,7 @@ export interface IComment {
   description: string;
 }
 
-type TaskStatus = (typeof EStatus)[keyof typeof EStatus];
+export type TaskStatus = (typeof EStatus)[keyof typeof EStatus];
 
 export interface ITask {
   id: string;

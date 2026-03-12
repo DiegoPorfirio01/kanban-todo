@@ -8,8 +8,9 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
-import { ITask } from '../../interfaces/task-interface';
-import { AsyncPipe } from '@angular/common';
+import { ITask, TaskStatus } from '../../interfaces/task-interface';
+import { AsyncPipe, JsonPipe } from '@angular/common';
+import { EStatus } from '../../enum';
 
 /**
  * @title Drag&Drop connected sorting
@@ -17,14 +18,44 @@ import { AsyncPipe } from '@angular/common';
 @Component({
   selector: 'app-task-list-section',
   standalone: true,
-  imports: [TaskCardComponent, CdkDropList, CdkDrag, AsyncPipe],
+  imports: [TaskCardComponent, CdkDropList, CdkDrag, AsyncPipe, JsonPipe],
   templateUrl: './task-list-section.component.html',
   styleUrl: './task-list-section.component.css',
 })
 export class TaskListSectionComponent {
   readonly _tasksService = inject(TaskService);
 
-  drop(event: CdkDragDrop<string[]>) {
+  onCardDrop(event: CdkDragDrop<ITask[]>) {
+    this.moveCardToColumn(event);
+
+    const taskId = event.item.data.id;
+    const taskCurrentStatus = event.item.data.status;
+    const droppedColumn = event.container.id as TaskStatus;
+
+    this.updateTaskStatus({
+      taskId,
+      taskCurrentStatus,
+      droppedColumn,
+    });
+  }
+
+  private updateTaskStatus({
+    taskId,
+    taskCurrentStatus,
+    droppedColumn,
+  }: {
+    taskId: string;
+    taskCurrentStatus: TaskStatus;
+    droppedColumn: EStatus;
+  }) {
+    // this._tasksService.moveTask({
+    //   taskId,
+    //   taskCurrentStatus,
+    //   droppedColumn,
+    // });
+  }
+
+  private moveCardToColumn(event: CdkDragDrop<ITask[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,

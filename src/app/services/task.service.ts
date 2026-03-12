@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
-import { ITask, ITaskFormControls } from '../interfaces/task-interface';
+import {
+  ITask,
+  ITaskFormControls,
+  TaskStatus,
+} from '../interfaces/task-interface';
 import { generateUniqueId } from '../utils/generate-unique-id-with-timestamp';
 import { EStatus } from '../enum';
 
@@ -37,7 +41,49 @@ export class TaskService {
     this._tasksTodo$.next([...currentList, newTask]);
   }
 
-  verificaTasks() {
-    console.log('Lista nos service', this._tasksTodo$.value);
+  moveTask({
+    taskId,
+    taskCurrentStatus,
+    droppedColumn,
+  }: {
+    taskId: string;
+    taskCurrentStatus: TaskStatus;
+    droppedColumn: TaskStatus;
+  }) {
+    switch (droppedColumn) {
+      case EStatus.DO_TO:
+        const currentListTodo = this._tasksTodo$.value;
+        const tasksTodo = currentListTodo.map((item) => {
+          if (item.id === taskId) {
+            item.status = droppedColumn;
+          }
+          return item;
+        });
+
+        this._tasksTodo$.next(tasksTodo);
+        break;
+      case EStatus.DOING:
+        const currentListDoing = this._tasksDoing$.value;
+        const tasksDoing = currentListDoing.map((item) => {
+          if (item.id === taskId) {
+            item.status = droppedColumn;
+          }
+          return item;
+        });
+
+        this._tasksDoing$.next(tasksDoing);
+        break;
+      case EStatus.DONE:
+        const currentListDone = this._tasksDone$.value;
+        const tasksDone = currentListDone.map((item) => {
+          if (item.id === taskId) {
+            item.status = droppedColumn;
+          }
+          return item;
+        });
+
+        this._tasksDone$.next(tasksDone);
+        break;
+    }
   }
 }

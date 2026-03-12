@@ -9,6 +9,7 @@ import {
   transferArrayItem,
 } from '@angular/cdk/drag-drop';
 import { ITask } from '../../interfaces/task-interface';
+import { AsyncPipe } from '@angular/common';
 
 /**
  * @title Drag&Drop connected sorting
@@ -16,28 +17,12 @@ import { ITask } from '../../interfaces/task-interface';
 @Component({
   selector: 'app-task-list-section',
   standalone: true,
-  imports: [TaskCardComponent, CdkDropList, CdkDrag],
+  imports: [TaskCardComponent, CdkDropList, CdkDrag, AsyncPipe],
   templateUrl: './task-list-section.component.html',
   styleUrl: './task-list-section.component.css',
 })
-export class TaskListSectionComponent implements OnInit {
-  todoTasks: ITask[] = [];
-  doingTasks: ITask[] = [];
-  doneTasks: ITask[] = [];
-
-  ngOnInit(): void {
-    this._tasksService.tasksTodo.subscribe((tasks) => {
-      this.todoTasks = tasks;
-    });
-
-    this._tasksService.tasksDoing.subscribe((tasks) => {
-      this.doingTasks = tasks;
-    });
-
-    this._tasksService.tasksDone.subscribe((tasks) => {
-      this.doneTasks = tasks;
-    });
-  }
+export class TaskListSectionComponent {
+  readonly _tasksService = inject(TaskService);
 
   drop(event: CdkDragDrop<string[]>) {
     if (event.previousContainer === event.container) {
@@ -55,5 +40,4 @@ export class TaskListSectionComponent implements OnInit {
       );
     }
   }
-  private readonly _tasksService = inject(TaskService);
 }

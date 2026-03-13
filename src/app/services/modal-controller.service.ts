@@ -5,6 +5,8 @@ import { TaskFormModalComponent } from '../components/task-form-modal/task-form-
 import { TaskCommentsModalComponent } from '../components/task-comments-modal/task-comments-modal.component';
 import {
   ETaskModalMode,
+  IComment,
+  ITask,
   ITaskFormControls,
 } from '../interfaces/task-interface';
 
@@ -43,10 +45,11 @@ export class ModalControllerService {
     });
   }
 
-  openTaskCommentModal() {
-    return this._dialog.open(TaskCommentsModalComponent, {
+  openTaskCommentModal(task: ITask) {
+    return this._dialog.open<ITask>(TaskCommentsModalComponent, {
       ...this._modalSizeOptions,
       disableClose: true,
+      data: task,
     });
   }
 }

@@ -21,7 +21,7 @@ import {
 export class TaskFormModalComponent {
   readonly ETaskModalMode = ETaskModalMode;
   readonly _data: ITaskFormModalData = inject(DIALOG_DATA);
-  readonly _dialogRef = inject(DialogRef);
+  readonly _dialogRef: DialogRef = inject(DialogRef);
 
   taskForm: FormGroup = new FormGroup({
     name: new FormControl(this._data.formValues.name, [

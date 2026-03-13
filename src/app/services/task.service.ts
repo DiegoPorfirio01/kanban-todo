@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import {
+  IComment,
   ITask,
   ITaskFormControls,
   TaskStatus,
@@ -41,49 +42,91 @@ export class TaskService {
     this._tasksTodo$.next([...currentList, newTask]);
   }
 
-  moveTask({
-    taskId,
-    taskCurrentStatus,
-    droppedColumn,
-  }: {
-    taskId: string;
-    taskCurrentStatus: TaskStatus;
-    droppedColumn: TaskStatus;
-  }) {
-    switch (droppedColumn) {
-      case EStatus.DO_TO:
-        const currentListTodo = this._tasksTodo$.value;
-        const tasksTodo = currentListTodo.map((item) => {
-          if (item.id === taskId) {
-            item.status = droppedColumn;
-          }
-          return item;
-        });
+  removeTask(taskId: string, status: TaskStatus) {
+    const currentList = this.getTaskListByStatus(status);
 
-        this._tasksTodo$.next(tasksTodo);
-        break;
-      case EStatus.DOING:
-        const currentListDoing = this._tasksDoing$.value;
-        const tasksDoing = currentListDoing.map((item) => {
-          if (item.id === taskId) {
-            item.status = droppedColumn;
-          }
-          return item;
-        });
+    const taskIndex = currentList.value.findIndex((item) => item.id === taskId);
 
-        this._tasksDoing$.next(tasksDoing);
-        break;
-      case EStatus.DONE:
-        const currentListDone = this._tasksDone$.value;
-        const tasksDone = currentListDone.map((item) => {
-          if (item.id === taskId) {
-            item.status = droppedColumn;
-          }
-          return item;
-        });
+    if (taskIndex === -1) return;
 
-        this._tasksDone$.next(tasksDone);
-        break;
-    }
+    currentList.value.splice(taskIndex, 1);
+
+    currentList.next(currentList.value);
+  }
+
+  addComment(task: ITask, comment: IComment) {
+    const currentList = this.getTaskListByStatus(task.status);
+
+    const taskIndex = currentList.value.findIndex(
+      (item) => item.id === task.id,
+    );
+
+    if (taskIndex === -1) return;
+
+    const updateList = [...currentList.value];
+
+    updateList[taskIndex].comments = [...(task.comments ?? []), comment];
+
+    currentList.next(updateList);
+  }
+
+  removeComment(taskId: string, status: TaskStatus, commentId: string) {
+    const currentList = this.getTaskListByStatus(status);
+
+    const taskIndex = currentList.value.findIndex((item) => item.id === taskId);
+
+    if (taskIndex === -1) return;
+
+    currentList.value[taskIndex].comments = currentList.value[
+      taskIndex
+    ].comments?.filter((item) => item.id !== commentId);
+
+    currentList.next(currentList.value);
+  }
+
+  updateTask(task: ITask) {
+    const currentList = this.getTaskListByStatus(task.status);
+    console.log(currentList.value);
+    const taskIndex = currentList.value.findIndex(
+      (item) => item.id === task.id,
+    );
+
+    if (taskIndex === -1) return;
+
+    currentList.value[taskIndex] = {
+      ...currentList.value[taskIndex],
+      ...task,
+    };
+
+    currentList.next(currentList.value);
+  }
+
+  // moveTask({
+  //   taskId,
+  //   taskCurrentStatus,
+  //   droppedColumn,
+  // }: {
+  //   taskId: string;
+  //   taskCurrentStatus: TaskStatus;
+  //   droppedColumn: TaskStatus;
+  // }) {
+  //   const currentList = this.getTaskListByStatus(taskCurrentStatus);
+  //   const taskIndex = currentList.value.findIndex((item) => item.id === taskId);
+
+  //   if (taskIndex === -1) return;
+
+  //   currentList.value[taskIndex].status = droppedColumn;
+
+  //   currentList.next(currentList.value);
+  // }
+
+  private getTaskListByStatus(status: TaskStatus) {
+    const taskListObject = {
+      [EStatus.DO_TO]: this._tasksTodo$,
+      [EStatus.DOING]: this._tasksDoing$,
+      [EStatus.DONE]: this._tasksDone$,
+    };
+
+    return taskListObject[status];
   }
 }

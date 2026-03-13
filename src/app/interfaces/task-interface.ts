@@ -10,7 +10,7 @@ export type TaskStatus = (typeof EStatus)[keyof typeof EStatus];
 export interface ITask {
   id: string;
   name: string;
-  description?: string;
+  description: string;
   status: TaskStatus;
   comments?: IComment[];
 }

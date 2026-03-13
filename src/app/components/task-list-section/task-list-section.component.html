@@ -2,9 +2,9 @@
 @let doingTasks = (this._tasksService.tasksDoing | async) ?? [];
 @let doneTasks = (this._tasksService.tasksDone | async) ?? [];
 
-<p>TODO {{ todoTasks | json }}</p>
-<p>DOING {{ doingTasks | json }}</p>
-<p>DO {{ doneTasks | json }}</p>
+<p>TODO {{ this._tasksService.tasksTodo | async | json }}</p>
+<p>DOING {{ this._tasksService.tasksDoing | async | json }}</p>
+<p>DO {{ this._tasksService.tasksDone | async | json }}</p>
 
 @let hasTasksCreated =
   todoTasks?.length !== 0 ||

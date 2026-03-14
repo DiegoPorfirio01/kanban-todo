@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TaskService } from '../../services/task.service';
 import { TaskCardComponent } from '../task-card/task-card.component';
 import {
@@ -10,7 +10,6 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ITask, TaskStatus } from '../../interfaces/task-interface';
 import { AsyncPipe, JsonPipe } from '@angular/common';
-import { EStatus } from '../../enum';
 
 /**
  * @title Drag&Drop connected sorting
@@ -32,27 +31,15 @@ export class TaskListSectionComponent {
     const taskCurrentStatus = event.item.data.status;
     const droppedColumn = event.container.id as TaskStatus;
 
-    this.updateTaskStatus({
-      taskId,
-      taskCurrentStatus,
-      droppedColumn,
-    });
+    this.updateTaskStatus(taskId, taskCurrentStatus, droppedColumn);
   }
 
-  private updateTaskStatus({
-    taskId,
-    taskCurrentStatus,
-    droppedColumn,
-  }: {
-    taskId: string;
-    taskCurrentStatus: TaskStatus;
-    droppedColumn: EStatus;
-  }) {
-    // this._tasksService.moveTask({
-    //   taskId,
-    //   taskCurrentStatus,
-    //   droppedColumn,
-    // });
+  private updateTaskStatus(
+    taskId: string,
+    taskCurrentStatus: TaskStatus,
+    droppedColumn: TaskStatus,
+  ) {
+    this._tasksService.moveTask(taskId, taskCurrentStatus, droppedColumn);
   }
 
   private moveCardToColumn(event: CdkDragDrop<ITask[]>) {

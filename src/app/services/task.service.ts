@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map } from 'rxjs';
+import { BehaviorSubject, map, tap } from 'rxjs';
 import {
   IComment,
   ITask,
@@ -13,19 +13,34 @@ import { EStatus } from '../enum';
   providedIn: 'root',
 })
 export class TaskService {
-  private _tasksTodo$ = new BehaviorSubject<ITask[]>([]);
-  private _tasksDoing$ = new BehaviorSubject<ITask[]>([]);
-  private _tasksDone$ = new BehaviorSubject<ITask[]>([]);
+  private _tasksTodo$ = new BehaviorSubject<ITask[]>(
+    this.getTasksFromLocalStorage(EStatus.DO_TO),
+  );
+  private _tasksDoing$ = new BehaviorSubject<ITask[]>(
+    this.getTasksFromLocalStorage(EStatus.DOING),
+  );
+  private _tasksDone$ = new BehaviorSubject<ITask[]>(
+    this.getTasksFromLocalStorage(EStatus.DONE),
+  );
 
-  readonly tasksTodo = this._tasksTodo$
-    .asObservable()
-    .pipe(map((tasks) => structuredClone(tasks)));
-  readonly tasksDoing = this._tasksDoing$
-    .asObservable()
-    .pipe(map((tasks) => structuredClone(tasks)));
-  readonly tasksDone = this._tasksDone$
-    .asObservable()
-    .pipe(map((tasks) => structuredClone(tasks)));
+  readonly tasksTodo = this._tasksTodo$.asObservable().pipe(
+    map((tasks) => structuredClone(tasks)),
+    tap(() =>
+      this.saveTasksOnLocalStorage(EStatus.DO_TO, this._tasksTodo$.value),
+    ),
+  );
+  readonly tasksDoing = this._tasksDoing$.asObservable().pipe(
+    map((tasks) => structuredClone(tasks)),
+    tap(() =>
+      this.saveTasksOnLocalStorage(EStatus.DOING, this._tasksDoing$.value),
+    ),
+  );
+  readonly tasksDone = this._tasksDone$.asObservable().pipe(
+    map((tasks) => structuredClone(tasks)),
+    tap(() =>
+      this.saveTasksOnLocalStorage(EStatus.DONE, this._tasksDone$.value),
+    ),
+  );
 
   constructor() {}
 
@@ -36,97 +51,102 @@ export class TaskService {
       status: EStatus.DO_TO,
       comments: [],
     };
-
-    const currentList = this._tasksTodo$.value;
-
-    this._tasksTodo$.next([...currentList, newTask]);
+    this._tasksTodo$.next([...this._tasksTodo$.value, newTask]);
   }
 
   removeTask(taskId: string, status: TaskStatus) {
-    const currentList = this.getTaskListByStatus(status);
-
-    const taskIndex = currentList.value.findIndex((item) => item.id === taskId);
-
-    if (taskIndex === -1) return;
-
-    currentList.value.splice(taskIndex, 1);
-
-    currentList.next(currentList.value);
-  }
-
-  addComment(task: ITask, comment: IComment) {
-    const currentList = this.getTaskListByStatus(task.status);
-
-    const taskIndex = currentList.value.findIndex(
-      (item) => item.id === task.id,
-    );
-
-    if (taskIndex === -1) return;
-
-    const updateList = [...currentList.value];
-
-    updateList[taskIndex].comments = [...(task.comments ?? []), comment];
-
-    currentList.next(updateList);
-  }
-
-  removeComment(taskId: string, status: TaskStatus, commentId: string) {
-    const currentList = this.getTaskListByStatus(status);
-
-    const taskIndex = currentList.value.findIndex((item) => item.id === taskId);
-
-    if (taskIndex === -1) return;
-
-    currentList.value[taskIndex].comments = currentList.value[
-      taskIndex
-    ].comments?.filter((item) => item.id !== commentId);
-
-    currentList.next(currentList.value);
+    const subject = this.getTaskListByStatus(status);
+    subject.next(subject.value.filter((t) => t.id !== taskId));
   }
 
   updateTask(task: ITask) {
-    const currentList = this.getTaskListByStatus(task.status);
-    console.log(currentList.value);
-    const taskIndex = currentList.value.findIndex(
-      (item) => item.id === task.id,
-    );
+    const subject = this.getTaskListByStatus(task.status);
+    const index = subject.value.findIndex((t) => t.id === task.id);
+    if (index === -1) return;
 
-    if (taskIndex === -1) return;
-
-    currentList.value[taskIndex] = {
-      ...currentList.value[taskIndex],
-      ...task,
-    };
-
-    currentList.next(currentList.value);
+    const newList = [...subject.value];
+    newList[index] = { ...task };
+    subject.next(newList);
   }
 
-  // moveTask({
-  //   taskId,
-  //   taskCurrentStatus,
-  //   droppedColumn,
-  // }: {
-  //   taskId: string;
-  //   taskCurrentStatus: TaskStatus;
-  //   droppedColumn: TaskStatus;
-  // }) {
-  //   const currentList = this.getTaskListByStatus(taskCurrentStatus);
-  //   const taskIndex = currentList.value.findIndex((item) => item.id === taskId);
+  moveTask(
+    taskId: string,
+    taskCurrentStatus: TaskStatus,
+    taskNextStatus: TaskStatus,
+  ) {
+    console.log(taskCurrentStatus, taskNextStatus);
 
-  //   if (taskIndex === -1) return;
+    const currentTaskList = this.getTaskListByStatus(taskCurrentStatus);
+    const nextTaskList = this.getTaskListByStatus(taskNextStatus);
+    const currentTask = currentTaskList.value.find(
+      (task) => task.id === taskId,
+    );
 
-  //   currentList.value[taskIndex].status = droppedColumn;
+    if (currentTask) {
+      // Atualiza o status da tarefa
+      currentTask.status = taskNextStatus;
+      // Remove a tarefa da lista atual
+      const currentTaskListWithoutTask = currentTaskList.value.filter(
+        (task) => task.id !== taskId,
+      );
+      currentTaskList.next([...currentTaskListWithoutTask]);
 
-  //   currentList.next(currentList.value);
-  // }
+      // Adiciona a tarefa na nova lista
+      nextTaskList.next([...nextTaskList.value, { ...currentTask }]);
+    }
+  }
 
-  private getTaskListByStatus(status: TaskStatus) {
+  addComment(task: ITask, comment: IComment) {
+    const subject = this.getTaskListByStatus(task.status);
+    const index = subject.value.findIndex((t) => t.id === task.id);
+    if (index === -1) return;
+
+    const newList = [...subject.value];
+    newList[index] = {
+      ...newList[index],
+      comments: [...(newList[index].comments || []), comment],
+    };
+    subject.next(newList);
+  }
+
+  removeComment(taskId: string, status: TaskStatus, commentId: string) {
+    const subject = this.getTaskListByStatus(status);
+    const index = subject.value.findIndex((t) => t.id === taskId);
+    if (index === -1) return;
+
+    const newList = [...subject.value];
+    newList[index] = {
+      ...newList[index],
+      comments: (newList[index].comments || []).filter(
+        (c) => c.id !== commentId,
+      ),
+    };
+    subject.next(newList);
+  }
+
+  private saveTasksOnLocalStorage(key: string, tasks: ITask[]) {
+    try {
+      localStorage.setItem(key, JSON.stringify(tasks));
+    } catch (error) {
+      console.error('Error saving to local storage', error);
+    }
+  }
+
+  private getTasksFromLocalStorage(key: EStatus) {
+    try {
+      const tasks = localStorage.getItem(key);
+      return tasks ? JSON.parse(tasks) : [];
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  private getTaskListByStatus(status: TaskStatus): BehaviorSubject<ITask[]> {
     const taskListObject = {
       [EStatus.DO_TO]: this._tasksTodo$,
       [EStatus.DOING]: this._tasksDoing$,
       [EStatus.DONE]: this._tasksDone$,
     };
-
     return taskListObject[status];
   }
 }

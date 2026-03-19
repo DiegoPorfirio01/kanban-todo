@@ -1,59 +1,109 @@
-# GoTask
+# 📋 GoTask
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.9.
+> Aplicação de gerenciamento de tarefas no estilo Kanban, construída com **Angular 19** e **Tailwind CSS**.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Sobre o Projeto
 
-```bash
-ng serve
+O **GoTask** é uma aplicação web de gerenciamento de tarefas inspirada no modelo Kanban. Com ela, é possível criar, editar, mover e comentar tarefas distribuídas em três colunas de status: **A Fazer**, **Em Andamento** e **Concluído**.
+
+Todos os dados são persistidos no **LocalStorage** do navegador, garantindo que as tarefas não sejam perdidas ao recarregar a página.
+
+---
+
+## ✨ Funcionalidades
+
+- ✅ **Criar tarefas** com nome e descrição
+- ✏️ **Editar tarefas** existentes
+- 🗑️ **Remover tarefas**
+- 🔀 **Mover tarefas** entre colunas (A Fazer → Em Andamento → Concluído)
+- 💬 **Adicionar e remover comentários** nas tarefas
+- 💾 **Persistência de dados** via LocalStorage
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+| Tecnologia                                                | Versão |
+| --------------------------------------------------------- | ------ |
+| [Angular](https://angular.dev/)                           | 19.x   |
+| [Angular CDK](https://material.angular.io/cdk/categories) | 19.x   |
+| [Tailwind CSS](https://tailwindcss.com/)                  | 4.x    |
+| [RxJS](https://rxjs.dev/)                                 | 7.8.x  |
+| [TypeScript](https://www.typescriptlang.org/)             | 5.7.x  |
+
+---
+
+## 📁 Estrutura do Projeto
+
+O projeto segue a arquitetura **Feature-Based Components**, onde cada funcionalidade é organizada em seu próprio módulo isolado, contendo seus componentes, modelos, serviços e utilitários. Isso facilita a escalabilidade, manutenção e separação de responsabilidades.
+
+```
+src/
+└── app/
+    ├── core/                   # Módulo core da aplicação
+    └── features/               # Módulos organizados por funcionalidade (Feature-Based)
+        ├── layout/             # Feature de layout (header, main-content)
+        └── task/               # Feature principal de tarefas
+            ├── components/     # Componentes da feature (card, modais, seções)
+            ├── models/         # Interfaces e enums
+            ├── services/       # TaskService (lógica de negócio + LocalStorage)
+            └── utils/          # Funções utilitárias (geração de ID único)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## ⚙️ Como Rodar o Projeto
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### Pré-requisitos
 
-```bash
-ng generate component component-name
-```
+- **Node.js** >= 18.x
+- **npm** >= 9.x
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
+### Instalação
 
 ```bash
-ng build
+# Clone o repositório
+git clone https://github.com/seu-usuario/go-task.git
+
+# Acesse o diretório
+cd go-task
+
+# Instale as dependências
+npm install
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+### Rodando em Desenvolvimento
 
 ```bash
-ng test
+npm start
 ```
 
-## Running end-to-end tests
+Acesse em: [http://localhost:4200](http://localhost:4200)
 
-For end-to-end (e2e) testing, run:
+### Build para Produção
 
 ```bash
-ng e2e
+npm run build
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Os arquivos gerados estarão em `dist/`.
 
-## Additional Resources
+### Rodando os Testes
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+```bash
+npm test
+```
+
+---
+
+## 📌 Status do Projeto
+
+🚧 Em desenvolvimento — novas funcionalidades podem ser adicionadas.
+
+---
+
+## 📄 Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
